@@ -15,6 +15,7 @@ var (
 	o                     = flag.String("o", "", "The output file for the schema.")
 	p                     = flag.String("p", "main", "The package that the structs are created in.")
 	i                     = flag.String("i", "", "A single file path (used for backwards compatibility).")
+	d                     = flag.String("d", "models", "A directory to output files for the schema.")
 	schemaKeyRequiredFlag = flag.Bool("schemaKeyRequired", false, "Allow input files with no $schema key.")
 )
 
@@ -52,6 +53,15 @@ func main() {
 		os.Exit(1)
 	}
 
+	if *d != "" {
+		err := generate.OutputFiles(*d, g, *p)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+		return
+	}
+
 	var w io.Writer = os.Stdout
 
 	if *o != "" {
@@ -62,6 +72,5 @@ func main() {
 			return
 		}
 	}
-
 	generate.Output(w, g, *p)
 }
